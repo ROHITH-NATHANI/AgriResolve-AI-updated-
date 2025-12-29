@@ -8,13 +8,13 @@ if (!API_KEY) {
 
 const ai = new GoogleGenAI({ apiKey: API_KEY });
 
-// Model Registry - Switching to Experimental 2.0 Flash (Often has higher 'Test' quotas than Stable 2.5)
+// Model Registry - Optimized for Free Tier Quota (Using 2.0 Flash Stable - typically 1500 RPD)
 const MODEL_REGISTRY = {
-    VISION_FAST: "gemini-2.0-flash-exp",
-    DEBATE_HIGH_THROUGHPUT: "gemini-2.0-flash-exp",
-    ARBITRATION_SMART: "gemini-2.0-flash-exp",
-    EXPLANATION_POLISHED: "gemini-2.0-flash-exp",
-    CHAT_INTERACTIVE: "gemini-2.0-flash-exp",
+    VISION_FAST: "gemini-2.0-flash",
+    DEBATE_HIGH_THROUGHPUT: "gemini-2.0-flash",
+    ARBITRATION_SMART: "gemini-2.0-flash",
+    EXPLANATION_POLISHED: "gemini-2.0-flash",
+    CHAT_INTERACTIVE: "gemini-2.0-flash",
 };
 
 export async function routeGeminiCall(
