@@ -22,18 +22,18 @@ export async function runAgenticPipeline(
         const result = await consolidatedAgent.run(imageB64, language);
 
         // Rapidly progress through states for the visual flair on the frontend
-        // (The user expects to see these stages)
+        // (The user expects to see these stages). increased delays to 1.5s for "show" effect.
         onStatusUpdate(AssessmentStatus.EVALUATING);
-        await new Promise(r => setTimeout(r, 400)); // Visual pacing
+        await new Promise(r => setTimeout(r, 1200));
 
         onStatusUpdate(AssessmentStatus.DEBATING);
-        await new Promise(r => setTimeout(r, 400));
+        await new Promise(r => setTimeout(r, 1500)); // Give slightly more time for "Debate" weight
 
         onStatusUpdate(AssessmentStatus.ARBITRATING);
-        await new Promise(r => setTimeout(r, 400));
+        await new Promise(r => setTimeout(r, 1200));
 
         onStatusUpdate(AssessmentStatus.EXPLAINING);
-        await new Promise(r => setTimeout(r, 400));
+        await new Promise(r => setTimeout(r, 1200));
 
         onStatusUpdate(AssessmentStatus.COMPLETED);
 

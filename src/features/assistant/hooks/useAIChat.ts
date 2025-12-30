@@ -56,11 +56,11 @@ export const useAIChat = (contextData: AssessmentData | null) => {
         If a diagnosis is provided below, use it to answer questions specifically about THAT problem.
       `;
 
-            if (contextData) {
+            if (contextData && contextData.arbitrationResult) {
                 systemContext += `
           \n--- CURRENT DIAGNOSIS ---
-          Problem: ${contextData.arbitrationResult.final_diagnosis}
-          Confidence: ${(contextData.arbitrationResult.confidence_score * 100).toFixed(0)}%
+          Problem: ${contextData.arbitrationResult.final_diagnosis || contextData.arbitrationResult.decision || "Unknown"}
+          Confidence: ${((contextData.arbitrationResult.confidence || contextData.arbitrationResult.confidence_score || 0) * 100).toFixed(0)}%
           Explanation: ${contextData.explanation.summary}
           Recommended Actions: ${contextData.explanation.guidance.join(', ')}
           Healthy Probability: ${(contextData.healthyResult.score * 100).toFixed(0)}%
