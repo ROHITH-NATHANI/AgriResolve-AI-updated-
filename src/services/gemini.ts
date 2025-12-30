@@ -23,6 +23,7 @@ export async function routeGeminiCall(
     imageB64?: string
 ): Promise<string> {
     const modelName = MODEL_REGISTRY[taskType];
+    console.log(`[Gemini Service] Routing '${taskType}' to model: ${modelName}`);
     const model = ai.models.generateContent;
 
     const parts: any[] = [{ text: prompt }];
