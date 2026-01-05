@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/generate-og-preview.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives",
@@ -41,6 +42,7 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "postcss": "^8.5.6",
     "prettier": "^3.7.4",
+    "sharp": "^0.33.5",
     "tailwindcss": "^4.1.18",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
