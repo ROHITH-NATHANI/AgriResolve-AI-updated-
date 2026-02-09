@@ -7,6 +7,7 @@ import { useLocationWeather } from '../features/assistant/hooks/useLocationWeath
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { LanguageSelector } from './LanguageSelector';
+import { MobileBottomNav } from './MobileBottomNav';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -261,12 +262,15 @@ export const Layout: React.FC<LayoutProps> = ({ children, history = [], onSelect
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 relative z-10 bg-transparent pt-20 md:pt-8 safe-area-inset-top">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 relative z-10 bg-transparent pt-20 md:pt-8 pb-24 md:pb-8 safe-area-inset-top safe-area-inset-bottom">
           <div className="max-w-6xl mx-auto h-full flex flex-col">
             {children}
           </div>
         </main>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav />
     </div>
   );
 };

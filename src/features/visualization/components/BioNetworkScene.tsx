@@ -66,7 +66,25 @@ const Connections = () => {
 export const BioNetworkScene: React.FC = () => {
     return (
         <div className="fixed inset-0 w-full h-full -z-10 bg-gradient-to-br from-green-50/30 via-white/85 to-white/95 pointer-events-none">
-            <Canvas className="opacity-85" camera={{ position: [0, 0, 5], fov: 60 }}>
+            <Canvas
+                className="opacity-85"
+                camera={{ position: [0, 0, 5], fov: 60 }}
+                gl={{
+                    powerPreference: "default",
+                    antialias: true,
+                    preserveDrawingBuffer: false,
+                    failIfMajorPerformanceCaveat: false
+                }}
+                onCreated={({ gl }) => {
+                    gl.domElement.addEventListener('webglcontextlost', (event) => {
+                        event.preventDefault();
+                        console.warn('WebGL Context Lost - attempting restore');
+                    }, false);
+                    gl.domElement.addEventListener('webglcontextrestored', () => {
+                        console.log('WebGL Context Restored');
+                    }, false);
+                }}
+            >
                 {/* Existing Particles */}
                 <Particles />
                 <Connections />

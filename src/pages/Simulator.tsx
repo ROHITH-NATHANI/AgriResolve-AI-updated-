@@ -283,6 +283,8 @@ export const Simulator: React.FC = () => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [selectedCrop, setSelectedCrop] = useState<CropType>('RICE');
     const [cameraMode, setCameraMode] = useState<'ORBIT' | 'SCOUT'>('ORBIT');
+    // Mobile Sidebar State
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     // Auto-Run Effect
     useEffect(() => {
@@ -322,24 +324,50 @@ export const Simulator: React.FC = () => {
     };
 
     return (
-        <div className="h-screen bg-neutral-900 text-white overflow-hidden flex flex-col md:flex-row font-sans">
+        <div className="h-[100dvh] bg-neutral-900 text-white overflow-hidden flex flex-col md:flex-row font-sans relative">
+            {/* Mobile Header / Toggle */}
+            <div className="md:hidden bg-neutral-800 border-b border-white/10 p-4 flex justify-between items-center z-20 shrink-0">
+                <div className="flex items-center gap-2">
+                    <Activity className="w-5 h-5 text-emerald-400" />
+                    <span className="font-bold text-lg tracking-tight">Agri-Twin</span>
+                </div>
+                <button
+                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                    className={`p-2 rounded-lg transition-colors ${isSidebarOpen ? 'bg-white/10 text-white' : 'text-neutral-400'}`}
+                >
+                    <Layers className="w-5 h-5" />
+                </button>
+            </div>
+
             {/* Sidebar / Configuration */}
-            <div className="w-full md:w-80 bg-neutral-800/50 backdrop-blur-xl border-r border-white/10 p-6 flex flex-col gap-6 z-10">
-                <div>
+            <div className={`
+                absolute md:relative inset-0 z-30 md:z-auto bg-neutral-900/95 md:bg-neutral-800/50 backdrop-blur-xl md:backdrop-blur-none 
+                border-r border-white/10 p-6 flex-col gap-6 transition-transform duration-300 ease-in-out md:translate-x-0 md:flex md:w-80
+                ${isSidebarOpen ? 'flex translate-x-0' : 'hidden md:flex -translate-x-full'}
+            `}>
+                <div className="hidden md:block">
                     <h1 className="text-2xl font-black bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent flex items-center gap-2">
                         <Activity className="w-6 h-6 text-emerald-400" /> {t('sim_title', 'Agri-Twin')}
                     </h1>
                     <p className="text-xs text-neutral-400 mt-1 uppercase tracking-widest">Cyber-Physical Simulator</p>
                 </div>
 
+                {/* Mobile Close Button */}
+                <button
+                    className="md:hidden absolute top-4 right-4 p-2 text-neutral-400"
+                    onClick={() => setIsSidebarOpen(false)}
+                >
+                    <ChevronRight className="w-6 h-6 rotate-180" />
+                </button>
+
                 {/* Crop Selector */}
-                <div className="space-y-2">
+                <div className="space-y-2 mt-8 md:mt-0">
                     <label className="text-xs font-bold text-neutral-500 uppercase">Crop Model</label>
                     <div className="grid grid-cols-2 gap-2">
                         {(Object.keys(CROP_LIBRARY) as CropType[]).map(c => (
                             <button
                                 key={c}
-                                onClick={() => { setSelectedCrop(c); const e = new AgriTwinEngine(shc, c); setEngine(e); setSimState(e.state); }}
+                                onClick={() => { setSelectedCrop(c); const e = new AgriTwinEngine(shc, c); setEngine(e); setSimState(e.state); if (window.innerWidth < 768) setIsSidebarOpen(false); }}
                                 className={`p-2 rounded-lg text-xs font-bold transition-all border ${selectedCrop === c
                                     ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400'
                                     : 'bg-neutral-800 border-white/5 text-neutral-400 hover:bg-white/5'}`}
@@ -375,19 +403,19 @@ export const Simulator: React.FC = () => {
                 {/* Actions */}
                 <div className="mt-auto space-y-3">
                     <div className="grid grid-cols-2 gap-2">
-                        <button onClick={() => handleAction('IRRIGATE')} className="bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 p-3 rounded-xl flex items-center justify-center gap-2 transition-all">
+                        <button onClick={() => handleAction('IRRIGATE')} className="bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 p-3 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95">
                             <Droplets className="w-5 h-5" />
                             <span className="font-bold text-sm">{t('sim_irrigate', 'Irrigate')}</span>
                         </button>
-                        <button onClick={() => handleAction('FERTILIZE')} className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 p-3 rounded-xl flex items-center justify-center gap-2 transition-all">
+                        <button onClick={() => handleAction('FERTILIZE')} className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 p-3 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95">
                             <Sprout className="w-5 h-5" />
                             <span className="font-bold text-sm">{t('sim_fertilize', 'Fertilize')}</span>
                         </button>
-                        <button onClick={() => handleAction('WEED')} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 p-3 rounded-xl flex items-center justify-center gap-2 transition-all">
+                        <button onClick={() => handleAction('WEED')} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 p-3 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95">
                             <Wind className="w-5 h-5" />
                             <span className="font-bold text-sm">De-Weed</span>
                         </button>
-                        <button onClick={() => handleAction('HARVEST')} className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 p-3 rounded-xl flex items-center justify-center gap-2 transition-all">
+                        <button onClick={() => handleAction('HARVEST')} className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 p-3 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95">
                             <ChevronRight className="w-5 h-5" />
                             <span className="font-bold text-sm">Harvest (Rotate)</span>
                         </button>
@@ -396,12 +424,12 @@ export const Simulator: React.FC = () => {
                     <div className="flex gap-2">
                         <button
                             onClick={() => setIsPlaying(!isPlaying)}
-                            className={`flex-1 py-3 rounded-xl font-bold flex items-center justify-center gap-2 text-black transition-all ${isPlaying ? 'bg-amber-400 hover:bg-amber-500' : 'bg-emerald-400 hover:bg-emerald-500'}`}
+                            className={`flex-1 py-3 rounded-xl font-bold flex items-center justify-center gap-2 text-black transition-all active:scale-95 ${isPlaying ? 'bg-amber-400 hover:bg-amber-500' : 'bg-emerald-400 hover:bg-emerald-500'}`}
                         >
                             {isPlaying ? <Pause className="fill-current w-4 h-4" /> : <Play className="fill-current w-4 h-4" />}
                             {isPlaying ? "Pause" : "Start"}
                         </button>
-                        <button onClick={reset} className="p-3 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all">
+                        <button onClick={reset} className="p-3 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all active:scale-95">
                             <RefreshCw className="w-5 h-5" />
                         </button>
                     </div>
@@ -409,13 +437,13 @@ export const Simulator: React.FC = () => {
                     {/* Camera Modes */}
                     <div className="flex gap-2 mt-2">
                         <button
-                            onClick={() => setCameraMode('ORBIT')}
+                            onClick={() => { setCameraMode('ORBIT'); if (window.innerWidth < 768) setIsSidebarOpen(false); }}
                             className={`flex-1 py-2 rounded-lg text-xs font-bold ${cameraMode === 'ORBIT' ? 'bg-white text-black' : 'bg-white/5 text-neutral-400'}`}
                         >
                             GOD VIEW
                         </button>
                         <button
-                            onClick={() => setCameraMode('SCOUT')}
+                            onClick={() => { setCameraMode('SCOUT'); if (window.innerWidth < 768) setIsSidebarOpen(false); }}
                             className={`flex-1 py-2 rounded-lg text-xs font-bold ${cameraMode === 'SCOUT' ? 'bg-white text-black' : 'bg-white/5 text-neutral-400'}`}
                         >
                             SCOUT VIEW
@@ -425,48 +453,51 @@ export const Simulator: React.FC = () => {
             </div>
 
             {/* Main Stage (3D) */}
-            <div className="flex-1 relative bg-black">
+            <div className="flex-1 relative bg-black h-full">
                 {/* HUD Overlay */}
-                <div className="absolute top-6 left-6 right-6 flex justify-between items-start pointer-events-none z-10">
-                    <div className="flex gap-4">
-                        <div className="bg-black/40 backdrop-blur-md p-4 rounded-2xl border border-white/10 text-white">
-                            <div className="text-xs text-neutral-400 uppercase font-bold">Crop Age</div>
-                            <div className="text-3xl font-black font-mono">{simState.day} <span className="text-sm text-neutral-500 font-sans">{t('sim_days', 'Days')}</span></div>
-                            <div className="text-xs text-emerald-400 mt-1">Stage: {simState.crop.dvs < 0.2 ? 'Seedling' : (simState.crop.dvs < 1 ? 'Vegetative' : 'Reproductive')}</div>
+                <div className="absolute top-4 md:top-6 left-4 right-4 md:left-6 md:right-6 flex flex-col md:flex-row justify-between items-start pointer-events-none z-10 gap-3">
+                    <div className="flex gap-2 md:gap-4 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-hide">
+                        <div className="bg-black/40 backdrop-blur-md p-3 md:p-4 rounded-2xl border border-white/10 text-white min-w-[100px] md:min-w-0">
+                            <div className="text-[10px] md:text-xs text-neutral-400 uppercase font-bold">Crop Age</div>
+                            <div className="text-2xl md:text-3xl font-black font-mono">{simState.day} <span className="text-xs md:text-sm text-neutral-500 font-sans">{t('sim_days', 'Days')}</span></div>
+                            <div className="text-[10px] md:text-xs text-emerald-400 mt-1 truncate">Stage: {simState.crop.dvs < 0.2 ? 'Seedling' : (simState.crop.dvs < 1 ? 'Vegetative' : 'Reproductive')}</div>
                         </div>
-                        <div className="bg-black/40 backdrop-blur-md p-4 rounded-2xl border border-white/10 text-white">
-                            <div className="text-xs text-neutral-400 uppercase font-bold">Yield Forecast</div>
-                            <div className="text-3xl font-black font-mono text-cyan-400">{Math.floor(simState.yield_forecast)} <span className="text-sm text-neutral-500 font-sans">kg/ha</span></div>
+                        <div className="bg-black/40 backdrop-blur-md p-3 md:p-4 rounded-2xl border border-white/10 text-white min-w-[120px] md:min-w-0">
+                            <div className="text-[10px] md:text-xs text-neutral-400 uppercase font-bold">Yield Forecast</div>
+                            <div className="text-2xl md:text-3xl font-black font-mono text-cyan-400">{Math.floor(simState.yield_forecast)} <span className="text-xs md:text-sm text-neutral-500 font-sans">kg/ha</span></div>
                         </div>
                         {simState.crop.weed_density > 0.1 && (
-                            <div className="bg-red-900/40 backdrop-blur-md p-4 rounded-2xl border border-red-500/30 text-white animate-pulse">
-                                <div className="text-xs text-red-300 uppercase font-bold">Weed Infestation</div>
-                                <div className="text-2xl font-black font-mono text-red-400">{Math.floor(simState.crop.weed_density * 100)}%</div>
-                                <div className="text-xs text-red-300 mt-1">Competition High</div>
+                            <div className="bg-red-900/40 backdrop-blur-md p-3 md:p-4 rounded-2xl border border-red-500/30 text-white animate-pulse min-w-[120px] md:min-w-0">
+                                <div className="text-[10px] md:text-xs text-red-300 uppercase font-bold">Weed Infestation</div>
+                                <div className="text-xl md:text-2xl font-black font-mono text-red-400">{Math.floor(simState.crop.weed_density * 100)}%</div>
+                                <div className="text-[10px] md:text-xs text-red-300 mt-1">Competition High</div>
                             </div>
                         )}
                     </div>
 
-                    <div className="bg-black/40 backdrop-blur-md p-4 rounded-2xl border border-white/10 text-white min-w-[200px]">
-                        <div className="flex items-center gap-2 mb-2 text-xs text-neutral-400 uppercase font-bold">
+                    <div className="bg-black/40 backdrop-blur-md p-3 md:p-4 rounded-2xl border border-white/10 text-white w-full md:w-auto md:min-w-[200px]">
+                        <div className="flex items-center gap-2 mb-2 text-[10px] md:text-xs text-neutral-400 uppercase font-bold">
                             <ThermometerSun className="w-4 h-4" /> Environment
                         </div>
-                        <div className="space-y-1 font-mono text-sm">
-                            <div className="flex justify-between">
-                                <span>Temp</span>
+                        <div className="flex md:block gap-4 md:gap-0 font-mono text-sm">
+                            <div className="flex justify-between flex-1 md:flex-none">
+                                <span className="text-neutral-500 md:text-white">Temp</span>
                                 <span>{Math.floor(simState.weather.temp_max)}°C</span>
                             </div>
-                            <div className="flex justify-between">
-                                <span>Humidity</span>
+                            <div className="flex justify-between flex-1 md:flex-none">
+                                <span className="text-neutral-500 md:text-white">Humidity</span>
                                 <span>{simState.weather.rain > 0 ? '90%' : '45%'}</span>
                             </div>
-                            <span>Rain</span>
-                            <span>{Math.floor(simState.weather.rain)}mm</span>
+                            <div className="flex justify-between flex-1 md:flex-none">
+                                <span className="text-neutral-500 md:text-white">Rain</span>
+                                <span>{Math.floor(simState.weather.rain)}mm</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-                {/* Controls Hint */}
-                <div className="bg-black/80 text-white px-3 py-1 rounded text-xs mt-2 text-center pointer-events-auto">
+
+                {/* Controls Hint - Hidden on mobile to save space or reduced */}
+                <div className="hidden md:block absolute top-24 left-1/2 -translate-x-1/2 bg-black/80 text-white px-3 py-1 rounded text-xs mt-2 text-center pointer-events-auto z-0">
                     <b>SCOUT MODE:</b> Click to Focus • WASD to Move • ESC to Exit
                 </div>
 
@@ -486,11 +517,11 @@ export const Simulator: React.FC = () => {
                     </Canvas>
                 </div>
 
-                {/* Log Overlay */}
-                <div className="absolute bottom-6 left-6 right-6 pointer-events-none">
-                    <div className="max-w-xl bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-4 text-xs font-mono max-h-32 overflow-hidden text-neutral-300">
+                {/* Log Overlay - Bottom padding for mobile nav */}
+                <div className="absolute bottom-24 md:bottom-6 left-4 right-4 md:left-6 md:right-6 pointer-events-none">
+                    <div className="max-w-xl bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-3 md:p-4 text-xs font-mono max-h-24 md:max-h-32 overflow-hidden text-neutral-300">
                         {simState.event_log.slice(0, 3).map((log, i) => (
-                            <div key={i} className="mb-1 border-b border-white/5 pb-1 last:border-0">
+                            <div key={i} className="mb-1 border-b border-white/5 pb-1 last:border-0 truncate">
                                 <span className="text-emerald-500 mr-2">➜</span> {log}
                             </div>
                         ))}
